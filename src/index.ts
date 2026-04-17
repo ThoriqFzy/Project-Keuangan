@@ -1,22 +1,9 @@
-import { Elysia, t } from "elysia";
-import { db } from "./db";
-import { users } from "./db/schema";
+import { Elysia } from "elysia";
+import { usersRoute } from "./routes/users-route";
 
 const app = new Elysia()
   .get("/", () => "Hello Elysia")
-  .get("/users", async () => {
-    return await db.select().from(users);
-  })
-  .post("/users", async ({ body }) => {
-    const { name, email } = body as { name: string, email: string };
-    await db.insert(users).values({ name, email });
-    return { success: true };
-  }, {
-    body: t.Object({
-      name: t.String(),
-      email: t.String()
-    })
-  })
+  .use(usersRoute)
   .listen(3000);
 
 console.log(
